@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var Converter = require('../convert.js');
+var fs = require('fs');
+
+function parseArguments() {
+    program
+        .version('0.0.1')
+        .usage('[option]')
+        .option('-s, --spec <file>', 'Convert a given RAML spec to a POSTMan collection')
+        .option('-o, --output <file>', 'Store the collection in a file')
+        .option('-g, --group', 'Group the requests into folders');
+
+    program.on('--help', function() {
+        console.log('	Converts a RAML API spec to a POSTMan collection');
+        console.log('');
+        console.log('	Examples:');
+        console.log('		Read spec.raml and store the output in output.json after grouping the requests into folders');
+        console.log('			./raml2postman -s spec.raml -o output.json -g');
+        console.log('');
+        console.log('		Read spec.raml and print the output to the console');
+        console.log('			./raml2postman -s spec.raml');
+        console.log('');
+    });
+
+    program.parse(process.argv);
+
+    var inputFile = program.spec || program.s;
+    var outputFile = program.output || program.o || false;
+    var group = program.group || program.g || false;
+
+    function callback(output) {
+        if (outputFile) {
+            fs.writeFile(outputFile, JSON.stringify(output, null, 4), function(err) {
+                if (err) {
+                    console.error("Could not write to file");
+                    process.exit(1);
+                }
+                process.exit(0);
+            });
+        } else {
+            console.log(output);
+            process.exit(0);
+        }
+    }
+
+
+    if (inputFile) {
+		Converter._convert(inputFile, group, callback);
+    } else {
+    	program.emit('--help');
+        process.exit(1);
+    }
+}
+
+parseArguments();
