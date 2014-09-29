@@ -49,7 +49,7 @@ var converter = {
 
             // Top level resource, create another folder, pass the new folder id to the children.
             var folder = {};
-            folder.id = uuid.v4();
+            folder.id = this.generateId();
             folder.name = res.relativeUri;
             folder.description = "";
             folder.order = [];
@@ -82,13 +82,13 @@ var converter = {
                 }
             }
 
-            request.id = uuid.v4();
+            request.id = this.generateId();
             request.method = req.method;
 
             // No name has been specified, use the complete Uri minus the Base Uri.
             request.name = resourceUri.replace(this.data.baseUri, '');
             
-            request.time = Date.now();
+            request.time = this.generateTimestamp();
             request.url = resourceUri;
 
             // Headers
@@ -269,8 +269,8 @@ var converter = {
         var sf = this.sampleFile;
 
         // Collection trivia
-        sf.id = uuid.v4();
-        sf.timestamp = Date.now();
+        sf.id = this.generateId();
+        sf.timestamp = this.generateTimestamp();
 
         // Cache sampleRequest
         this.sampleRequest = sf.requests[0];
@@ -282,8 +282,8 @@ var converter = {
         sf.folders = [];
 
         sf.environment.name = sf.name + "'s Environment";
-        sf.environment.timestamp = Date.now();
-        sf.environment.id = uuid.v4();
+        sf.environment.timestamp = this.generateTimestamp();
+        sf.environment.id = this.generateId();
 
         // BaseURI Conversion
         _.forOwn(this.data.baseUriParameters, function(val, param) {
@@ -322,11 +322,30 @@ var converter = {
         this.validate();
     },
 
-    _convert: function(inputFile, group, cb) {
+    _convert: function(inputFile, options, cb) {
         var file = path.resolve(__dirname, inputFile);
 
-        this.group = group;
+        this.group = options.group;
+        this.test = options.test;
+
         this.parseFile(file, cb);
+    },
+
+    generateId: function(){
+        if(this.test){
+            return "";
+        }
+        else{
+            return uuid.v4();
+        }
+    },
+
+    generateTimestamp: function(){
+        if(this.test){
+            return 0;
+        }else{
+            return Date.now();
+        }
     },
 
     validate: function() {

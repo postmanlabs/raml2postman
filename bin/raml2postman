@@ -3,6 +3,8 @@
 var program = require('commander');
 var Converter = require('../convert.js');
 var fs = require('fs');
+var path = require('path');
+var _ = require('lodash');
 
 function parseArguments() {
     program
@@ -10,47 +12,91 @@ function parseArguments() {
         .usage('[option]')
         .option('-s, --spec <file>', 'Convert a given RAML spec to a POSTMan collection')
         .option('-o, --output <file>', 'Store the collection in a file')
-        .option('-g, --group', 'Group the requests into folders');
+        .option('-g, --group', 'Group the requests into folders')
+        .option('-t, --test', 'Test the converter')
+        .option('-p, --pretty', 'Pretty print the json file');
 
     program.on('--help', function() {
-        console.log('	Converts a RAML API spec to a POSTMan collection');
+        console.log('   Converts a RAML API spec to a POSTMan collection');
         console.log('');
-        console.log('	Examples:');
-        console.log('		Read spec.raml and store the output in output.json after grouping the requests into folders');
-        console.log('			./raml2postman -s spec.raml -o output.json -g');
+        console.log('   Examples:');
+        console.log('       Read spec.raml and store the output in output.json after grouping the requests into folders');
+        console.log('           ./raml2postman -s spec.raml -o output.json -g');
         console.log('');
-        console.log('		Read spec.raml and print the output to the console');
-        console.log('			./raml2postman -s spec.raml');
+        console.log('       Read spec.raml and print the output to the console');
+        console.log('           ./raml2postman -s spec.raml');
+        console.log('');
+        console.log('       Read spec.raml and print the prettified output to the console');
+        console.log('           ./raml2postman -s spec.raml -p');
         console.log('');
     });
 
     program.parse(process.argv);
 
-    var inputFile = program.spec || program.s;
-    var outputFile = program.output || program.o || false;
-    var group = program.group || program.g || false;
+    var inputFile = program.spec;
+    var outputFile = program.output || false;
+    var group = program.group || false;
+    var prettyPrint = program.pretty || false;
+    var test = program.test || false;
+
+    if (test) {
+
+        // file, options, callback
+        Converter._convert('sample_files/github-api-v3.raml', {
+            group: true,
+            test: true,
+        }, function(output) {
+            var data;
+            try {
+                data = JSON.parse(fs.readFileSync('sample_files/github.json', 'utf-8'));
+            } catch (err) {
+                console.log(err);
+                process.exit(1);
+            }
+
+            if (_.isEqual(output, data)) {
+                console.log('Test has passed');
+            } else {
+                console.log('Generated collection does not match expected collection, test has failed');
+            }
+            process.exit(0);
+        });
+    }
 
     function callback(output) {
         if (outputFile) {
-            fs.writeFile(outputFile, JSON.stringify(output, null, 4), function(err) {
-                if (err) {
-                    console.error("Could not write to file");
-                    process.exit(1);
+
+            var file = path.resolve(__dirname, outputFile);
+
+            try {
+                if (prettyPrint) {
+                    fs.writeFileSync(outputFile, JSON.stringify(output, null, 4));
+                } else {
+                    fs.writeFileSync(outputFile, JSON.stringify(output));
                 }
-                process.exit(0);
-            });
+                console.log("Output written to " + file);
+            } catch (err) {
+                console.log("Could not write to file");
+                console.log(err);
+                process.exit(1);
+            }
         } else {
             console.log(output);
             process.exit(0);
         }
     }
 
-
-    if (inputFile) {
-		Converter._convert(inputFile, group, callback);
-    } else {
-    	program.emit('--help');
-        process.exit(1);
+    if (!test) {
+        if (inputFile) {
+            // file, options, callback
+            Converter._convert(inputFile, {
+                group: group,
+                test: false
+            }, callback);
+        } else {
+            program.emit('--help');
+            process.exit(1);
+        }
     }
 }
 

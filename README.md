@@ -1,5 +1,11 @@
 A RAML to POSTMan converter.
 
-Usage: "bin/raml2postman -s path/to/raml/file -o path/to/output/file -g"
+Usage examples:
+    Read spec.raml and store the output in output.json after grouping the requests into folders
+        ./raml2postman -s spec.raml -o output.json -g
 
-Example: bin/raml2postman -s sample_files/github-api-v3.raml -o out.json -g
+    Read spec.raml and print the output to the console
+        ./raml2postman -s spec.raml
+
+	Read spec.raml and print the prettified output to the console
+        ./raml2postman -s spec.raml -p
