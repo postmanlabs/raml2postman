@@ -7,5 +7,5 @@ Usage examples:
     Read spec.raml and print the output to the console
         ./raml2postman -s spec.raml
 
-	Read spec.raml and print the prettified output to the console
+    Read spec.raml and print the prettified output to the console
         ./raml2postman -s spec.raml -p
