@@ -15,7 +15,14 @@ var converter = {
         raml.loadFile(filename).then(function(data) {
             try {
                 converter.convert(data);
-                callback(converter.sampleFile);
+                
+                // Validate before invoking callback;
+                if(converter.validate()){
+                    callback(converter.sampleFile);    
+                }else{
+                    callback({});    
+                }
+
             } catch (err) {
                 console.log(err);
                 process.exit(1);
@@ -281,7 +288,7 @@ var converter = {
         // Temporary, will be populated later.
         sf.folders = [];
 
-        sf.environment.name = sf.name + "'s Environment";
+        sf.environment.name = ( sf.name || "Default" ) + "'s Environment";
         sf.environment.timestamp = this.generateTimestamp();
         sf.environment.id = this.generateId();
 
@@ -317,9 +324,6 @@ var converter = {
             // If grouping is disabled, reset the folders.
             sf.folders = [];
         }
-
-        // Final validation step
-        this.validate();
     },
 
     _convert: function(inputFile, options, cb) {
@@ -352,9 +356,10 @@ var converter = {
 
         if (validator.validateJSON('c', this.sampleFile).status) {
             console.log('The conversion was successful');
+            return true;
         } else {
             console.log("Could not validate generated file");
-            return {};
+            return false;
         }
     }
 };
