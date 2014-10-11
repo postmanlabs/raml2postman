@@ -1,0 +1,3255 @@
+#%RAML 0.8
+title: Stormpath REST API
+version: v1
+baseUri: https://api.stormpath.com/{version}/{bucketName}/{testVersion}
+baseUriParameters: 
+  bucketName:
+    description: |
+      The sub-domain at which the API is accessible. Most API calls are sent to https://api.dropbox.com
+    enum: [ "api" ]
+  testVersion:
+    description: |
+      The sub-domain at which the API is accessible. Most API calls are sent to https://api.dropbox.com
+    enum: [ "api" ]
+mediaType: application/json
+securitySchemes: 
+  - basic: 
+      type: Basic Authentication
+  - digest: 
+      description: |
+        Stormpath also supports a more secure authentication scheme known as digest authentication.
+        This approach computes a cryptographic digest of the request and sends the digest value
+        along with the request. If the transmitted digest matches what the Stormpath API server
+        computes for the same request, the request is authenticated.
+        
+        This technique is especially secure because the API key secret is never transmitted outside
+        of the application, making it extremely difficult for anything (or anyone) outside of the
+        application to interfere with a request or see the secret.
+        
+        We recommend using digest authentication whenever possible because it is inherently more
+        secure. However, due to its complexity, it might not be feasible for some projects.
+        
+        All Stormpath SDKs (currently Java, Ruby, PHP, and Python) use this more secure digest
+        authentication so we recommend that you use the SDKs whenever possible. However, if we do not
+        yet have an SDK for your programming language, you should use basic authentication over HTTPS.
+        
+        Finally, if you would like to use Stormpath digest authentication in a programming language
+        that Stormpath does not yet support, you can attempt to port the algorithm to that language.
+        You can try to replicate the algorithm and use Stormpath existing code as examples to help:
+        
+        Java: Sauthc1Signer (the sign method) https://github.com/stormpath/stormpath-sdk-java/blob/master/impl/src/main/java/com/stormpath/sdk/impl/http/authc/Sauthc1Signer.java
+        Ruby: Sauthc1Signer (the sign_request method) https://github.com/stormpath/stormpath-sdk-ruby/blob/master/lib/stormpath-sdk/http/authc/sauthc1_signer.rb
+        PHP: Sauthc1Signer (the signRequest method) https://github.com/stormpath/stormpath-sdk-php/blob/master/src/Stormpath/Http/Authc/Sauthc1Signer.php
+        Python: Sauthc1Signer (the call method) https://github.com/stormpath/stormpath-sdk-python/blob/master/stormpath/auth.py
+        
+        If you port the algorithm to other languages, please let us know. We are happy to help.
+        Email us at support@stormpath.com and we will help as best as we can.
+      type: x-digest-schema
+      describedBy: 
+        headers: 
+          Authorisation: 
+            required: true
+schemas: 
+  - Group: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - GroupResponse: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "directory" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - loginAttempt: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "type" : {
+              "type" : "string" ,
+              "required" : true
+            } ,
+            "value" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "accountStore" : {
+              "type" : "string" ,
+              "required" : true
+            }
+          }
+        }
+  - TenantAplications: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - RetrieveTenant: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "key" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "applications" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "directories" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - DirectoriesList: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - CreateAplicationresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "passwordResetTokens" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - ReturnHrefAttribute: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "passwordResetTokens" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - UpdateApplicationresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "passwordResetTokens" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - LoginAttempt: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - LoginAttemptFailure: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "status" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "code" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "message" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "developerMessage" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "moreInfo" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - RegisterAccount: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "middleName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "password" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - RegisterAccountresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "fullName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "middleName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "customData" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groupMemberships" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "directory" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "emailVerificationToken" : {
+              "type" : "object" ,
+              "required" : false
+            }
+          }
+        }
+  - AccountsListresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - GroupsList: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - ResetEmail: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - ResetEmailresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - ResetEmailFailure: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "status" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "code" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "message" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "developerMessage" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "moreInfo" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - RetrievingTokenResource: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - RetrievingTokenResourceFailure: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "status" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "code" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "message" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "developerMessage" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "moreInfo" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - StoreMappingsList: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - UpdateApplication: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - CreateAplication: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - AccountStoreMapping: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "application" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accountStore" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "isDefaultAccountStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            } ,
+            "isDefaultGroupStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            }
+          }
+        }
+  - RetrieveAccountStoreMappings: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "accountStore" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "application" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "listIndex" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "isDefaultAccountStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            } ,
+            "isDefaultGroupStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateAccountStoreMapping: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "isDefaultAccountStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateAccountStoreMappingresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "accountStore" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "application" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "listIndex" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "isDefaultAccountStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            } ,
+            "isDefaultGroupStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            }
+          }
+        }
+  - AccountStoreMappingresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "accountStore" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "application" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "listIndex" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "isDefaultAccountStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            } ,
+            "isDefaultGroupStore" : {
+              "type" : "boolean" ,
+              "required" : false
+            }
+          }
+        }
+  - CreateCloudDirectory: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - CreateCloudDirectoryresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - RetrieveDirectory: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - UpdateDirectory: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateDirectoryresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - DirectoryAccountsList: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - CreateAccount: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "password" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - CreateAccountresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "fullName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "middleName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "customData" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groupMemberships" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "directory" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "emailVerificationToken" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - RetrieveGroup: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "name" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "directory" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "accounts" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - UpdateGroup: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "description" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - GroupMembershipsList: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    } ,
+                    "account" : {
+                      "type" : "object" ,
+                      "required" : false ,
+                      "properties" : {
+                        "href" : {
+                          "type" : "string" ,
+                          "required" : false
+                        }
+                      }
+                    } ,
+                    "group" : {
+                      "type" : "object" ,
+                      "required" : false ,
+                      "properties" : {
+                        "href" : {
+                          "type" : "string" ,
+                          "required" : false
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - CreateGroupMembership: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "group" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - CreateGroupMembershipresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "group" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - RetrieveGroupMembership: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "group" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+  - RetrieveAccount: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "fullName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "middleName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "customData" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groupMemberships" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "directory" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "emailVerificationToken" : {
+              "type" : "object" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateAccount: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - AccountGroupsList: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "offset" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "limit" : {
+              "type" : "number" ,
+              "required" : false
+            } ,
+            "items" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "type" : "object" ,
+                  "properties" : {
+                    "href" : {
+                      "type" : "string" ,
+                      "required" : false
+                    } ,
+                    "name" : {
+                      "type" : "string" ,
+                      "required" : false
+                    } ,
+                    "description" : {
+                      "type" : "string" ,
+                      "required" : false
+                    } ,
+                    "status" : {
+                      "type" : "string" ,
+                      "required" : false
+                    } ,
+                    "directory" : {
+                      "type" : "object" ,
+                      "required" : false ,
+                      "properties" : {
+                        "href" : {
+                          "type" : "string" ,
+                          "required" : false
+                        }
+                      }
+                    } ,
+                    "tenant" : {
+                      "type" : "object" ,
+                      "required" : false ,
+                      "properties" : {
+                        "href" : {
+                          "type" : "string" ,
+                          "required" : false
+                        }
+                      }
+                    } ,
+                    "accounts" : {
+                      "type" : "object" ,
+                      "required" : false ,
+                      "properties" : {
+                        "href" : {
+                          "type" : "string" ,
+                          "required" : false
+                        }
+                      }
+                    } ,
+                    "accountMemberships" : {
+                      "type" : "object" ,
+                      "required" : false ,
+                      "properties" : {
+                        "href" : {
+                          "type" : "string" ,
+                          "required" : false
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - RetrieveAccountCustomData: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "createdAt" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "modifiedAt" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "birthDate" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "favoriteColor" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateAccountCustomData: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "favoriteColor" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "hobby" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateAccountCustomDataresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "createdAt" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "modifiedAt" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "birthDate" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "favoriteColor" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "hobby" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - EmailVerificationTokens: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            }
+          }
+        }
+  - UpdateAccountresp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "href" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "username" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "email" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "fullName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "givenName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "middleName" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "surname" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "status" : {
+              "type" : "string" ,
+              "required" : false
+            } ,
+            "customData" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groups" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "groupMemberships" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "directory" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "tenant" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            } ,
+            "emailVerificationToken" : {
+              "type" : "object" ,
+              "required" : false
+            }
+          }
+        }
+  - LoginAttemp: |
+        {
+          "required" : true ,
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "properties" : {
+            "account" : {
+              "type" : "object" ,
+              "required" : false ,
+              "properties" : {
+                "href" : {
+                  "type" : "string" ,
+                  "required" : false
+                }
+              }
+            }
+          }
+        }
+resourceTypes:
+  - stormpathResource: 
+      get?: 
+        responses: 
+          200: 
+            description: OK. The request was successful and the response body contains the representation requested.
+          302: 
+            description: FOUND. A common redirect response; you can GET the representation at the URI in the location response header.
+          304: 
+            description: NOT MODIFIED. Your clients cached version of the representation is still up to date.
+          401: 
+            description: UNAUTHORIZED. Authentication credentials are required to access the resource. All requests must be authenticated.
+          403: 
+            description: FORBIDDEN. The supplied authentication credentials are not sufficient to access the resource.
+          404: 
+            description: NOT FOUND. We could not locate the resource based on the specified URI.
+          429: 
+            description: TOO MANY REQUESTS. Your application is sending too many simultaneous requests.
+          500: 
+            description: SERVER ERROR. We could not return the representation due to an internal server error.
+          503: 
+            description: SERVICE UNAVAILABLE. We are temporarily unable to service the request. Please wait for a bit and try again.
+      post?: 
+        responses: 
+          201: 
+            description: CREATED. The request was successful, we created a new resource, and the response body contains the representation. The Location header contains the new resources canonical URI.
+          400: 
+            description: BAD REQUEST. The data given in the POST or PUT failed validation. Inspect the response body for details.
+          401: 
+            description: UNAUTHORIZED. Authentication credentials are required to access the resource. All requests must be authenticated.
+          403: 
+            description: FORBIDDEN. The supplied authentication credentials are not sufficient to access the resource.
+          404: 
+            description: NOT FOUND. We could not locate the resource based on the specified URI.
+          405: 
+            description: METHOD NOT ALLOWED. POST is not supported for the resource.
+          409: 
+            description: CONFLICT. You cannot create or update a resource because another resource already exists or conflicts with one you are submitting.
+          415: 
+            description: UNSUPPORTED MEDIA TYPE. You did not specify the request Content-Type header to have a value of application/json. Only application/json is currently supported.
+          429: 
+            description: TOO MANY REQUESTS. Your application is sending too many simultaneous requests.
+          500: 
+            description: SERVER ERROR. We could not create or update the resource. Please try again.
+          503: 
+            description: SERVICE UNAVAILABLE. We are temporarily unable to service the request. Please wait for a bit and try again.
+      delete?: 
+        responses: 
+          204: 
+            description: NO CONTENT. The request was successful; the resource was deleted. The deleted resource representation will not be returned.
+          401: 
+            description: UNAUTHORIZED. The supplied credentials, if any, are not sufficient to create or update the resource.
+          403: 
+            description: FORBIDDEN. The supplied authentication credentials are not sufficient to access the resource.
+          404: 
+            description: NOT FOUND. We could not locate the resource based on the specified URI.
+          405: 
+            description: METHOD NOT ALLOWED. DELETE is not supported for the resource.
+          429: 
+            description: TOO MANY REQUESTS. Your application is sending too many simultaneous requests.
+          500: 
+            description: SERVER ERROR. We could not create or update the resource. Please try again.
+          503: 
+            description: SERVICE UNAVAILABLE. We are temporarily unable to service the request. Please wait for a bit and try again.
+      securedBy: [ basic , digest ]
+traits:
+  - query: 
+      queryParameters: 
+        limit: 
+          description: The maximum number of collection items to return for a single request. Minimum value is 1. The maximum value is 100 and the default value is 25. This is a pagination-specific attribute.
+          type: integer
+          default: 25
+        orderBy: 
+          description: A request for a Collection Resource can contain an optional orderBy query parameter. The query parameter value is a URL-encoded comma-delimited list of ordering statements.
+        q: 
+          description: A filter search consists of specifying a q query parameter and a corresponding search value on a Collection
+        offset: 
+          description: The zero-based starting index in the entire collection of the first item to return. The default value is 0. This is a pagination-specific attribute.
+          type: integer
+          default: 0
+securedBy: [ basic ]
+/tenants: 
+  type: stormpathResource
+  /current: 
+    type: stormpathResource
+    get: 
+      description: |
+        Because a REST caller can retrieve one and only one Tenant resource, it is often more convenient not to be concerned with the Tenant-specific URL is when performing a request, and instead use a simpler permanent alias.
+        
+        You can request the current Tenant resource, and the API server will automatically issue a 302 redirect to the Tenant resource corresponding to the currently executing API caller. In other words, this endpoint redirects the API caller to their own Tenantâ€™s URI.
+      responses: 
+        302: 
+  /{tenantId}: 
+    type: stormpathResource
+    get: 
+      description: "Execute a GET request with the tenant URI to retrieve the Tenant resource. You may only retrieve your own Tenant: every API Key that executes REST requests is associated with a Tenant, and the request caller may only retrieve the Tenant corresponding to the API Key used."
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: RetrieveTenant
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA" ,
+                  "name" : "My Tenant" ,
+                  "key" : "myTenant" ,
+                  "applications" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA/applications"
+                  } ,
+                  "directories" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA/directories"
+                  }
+                }
+    /applications: 
+      type: stormpathResource
+      get: 
+        is: [ query ]
+        description: You can list your tenants applications by sending a GET request to your tenants applications Collection Resource href URL. The response is a paginated list of tenant applications.
+        queryParameters: 
+          name: 
+            description: The name of the application. Must be unique across all applications within a tenant.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: TenantAplications
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA/applications" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/applications/aLlyOUrBAse34js9hjiH9j"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/applications/Xhf0a9HLA02djsdP90dsQ2"
+                      }
+                    ]
+                  }
+    /directories: 
+      type: stormpathResource
+      get: 
+        is: [ query ]
+        description: "List your tenent's directories."
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: DirectoriesList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW/directories" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/directories/lIKeabOss8w9fJf0fJfb34"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/directories/Hfjks7kj9sfKfh9fhsPifa"
+                      }
+                    ]
+                  }
+/applications: 
+  baseUriParameters:
+    bucketName:
+      description: |
+        The sub-domain at which the API is accessible. Most API calls are sent to https://api.dropbox.com
+      enum: [ "api-content" ]
+  type: stormpathResource
+  post: 
+    description: Create an application
+    queryParameters: 
+      createDirectory: 
+        description: "Create a brand new Directory and automatically name the directory based on the application. The generated name will reflect the new application's name as best as is possible, guaranteeing that it is unique compared to any of your existing directories."
+    body: 
+      application/json: 
+        schema: CreateAplication
+        example: |
+          {
+            "name" : "Best application ever" ,
+            "description" : "Really. The best application ever." ,
+            "status" : "enabled"
+          }
+    responses: 
+      201: 
+        body: 
+          application/json: 
+            schema: CreateAplicationresp
+            example: |
+              {
+                "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA" ,
+                "name" : "Best application ever" ,
+                "description" : "Really. The best application ever." ,
+                "status" : "ENABLED" ,
+                "tenant" : {
+                  "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA"
+                } ,
+                "accounts" : {
+                  "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/accounts"
+                } ,
+                "groups" : {
+                  "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/groups"
+                } ,
+                "passwordResetTokens" : {
+                  "href" : "http://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/passwordResetTokens"
+                }
+              }
+  /{applicationId}: 
+    type: stormpathResource
+    get: 
+      description: Retrieve application contents.
+      queryParameters: 
+        expand: 
+          description: "The following Application attributes are expandable: tenant, accounts, groups. Also, because accounts and groups are Collection Resources themselves, you can additionally control pagination for either expanded collection."
+          example: "GET https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA?expand=tenant,accounts(offset:0,limit:50)"
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: ReturnHrefAttribute
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA" ,
+                  "name" : "Best application ever" ,
+                  "description" : "Really. The best application ever." ,
+                  "status" : "ENABLED" ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA"
+                  } ,
+                  "accounts" : {
+                    "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/accounts"
+                  } ,
+                  "groups" : {
+                    "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/groups"
+                  } ,
+                  "passwordResetTokens" : {
+                    "href" : "http://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/passwordResetTokens"
+                  }
+                }
+    post: 
+      description: |
+        Update an application. Unspecified attributes are not changed, but at least one attribute must be specified.
+      body: 
+        application/json: 
+          schema: UpdateApplication
+          example: |
+            {
+              "description" : "A new description."
+            }
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: UpdateApplicationresp
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA" ,
+                  "name" : "Best application ever" ,
+                  "description" : "A new description." ,
+                  "status" : "enabled" ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/cJoiwcorTTmkDDBsf02AbA"
+                  } ,
+                  "accounts" : {
+                    "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/accounts"
+                  } ,
+                  "groups" : {
+                    "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/groups"
+                  } ,
+                  "passwordResetTokens" : {
+                    "href" : "http://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/passwordResetTokens"
+                  }
+                }
+    delete: 
+      description: Delete an application
+    /loginAttempts: 
+      type: stormpathResource
+      post: 
+        description: |
+          Execute an account login attempt. An HTTP POST authenticates an associated application account. Only HTTP POST is supported.
+          
+          |Parameter|Required|Description|          
+          |---|---|
+          |type|true|The type of the login attempt. The only currently supported type is basic. Additional types will likely be supported in the future.|
+          |value|true|The Base64 encoded username:plaintextPassword pair. For example, for username jsmith or email jsmith@email.com and plaintext password mySecretPassword this value attribute would be set to the following computed result: base64_encode("jsmith:mySecretPassword"); The base64_encode method call is only an example. You will need to use the Base64 encoding method is available to you in your chosen programming language and/or software frameworks.|
+          |accountStore|false|An optional link to the application's accountStore (directory or group) that you are certain contains the account attempting to login. Specifying this attribute can speed up logins if you know exactly which of the application's assigned account stores contains the account: Stormpath will not have to iterate over the assigned account stores to find the account to authenticate it. This can speed up logins significantly if you have many account stores (> 15) assigned to the application.|
+        body: 
+          application/josn: 
+            schema: loginAttempt
+            example: |
+              {
+                "type" : "basic" ,
+                "value" : "RHVtbXlGc2VyOkH1bW15cGFzc19EdW1teTBhc3MxIQ==" ,
+                "accountStore" : "https://api.stormpath.com/v1/directories/dirId"
+              }
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: LoginAttemp
+                example: |
+                  {
+                    "account" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/5BedLIvyfLjdKKEEXAMPLE"
+                    }
+                  }
+          400: 
+            description: If the login attempt fails, a 400 Bad Request is returned with an error payload explaining why the attempt failed
+            body: 
+              application/json: 
+                schema: LoginAttemptFailure
+                example: |
+                  {
+                    "status" : 400 ,
+                    "code" : 400 ,
+                    "message" : "Invalid username or password." ,
+                    "developerMessage" : "Invalid username or password." ,
+                    "moreInfo" : "mailto:support@stormpath.com"
+                  }
+    /accounts: 
+      type: stormpathResource
+      post: 
+        description: Register a new application account
+        body: 
+          application/json: 
+            schema: RegisterAccount
+            example: |
+              {
+                "username" : "jlpicard" ,
+                "email" : "capt@enterprise.com" ,
+                "givenName" : "Jean-Luc" ,
+                "middleName" : "" ,
+                "surname" : "Picard" ,
+                "password" : "uGhd%a8Kl!" ,
+                "status" : "ENABLED"
+              }
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: RegisterAccountresp
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA" ,
+                    "username" : "jlpicard" ,
+                    "email" : "capt@enterprise.com" ,
+                    "fullName" : "Jean-Luc Picard" ,
+                    "givenName" : "Jean-Luc" ,
+                    "middleName" : "" ,
+                    "surname" : "Picard" ,
+                    "status" : "ENABLED" ,
+                    "customData" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/customData"
+                    } ,
+                    "groups" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groups"
+                    } ,
+                    "groupMemberships" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groupMemberships"
+                    } ,
+                    "directory" : {
+                      "href" : "https://api.stormpath.com/v1/directories/1FaQ6kZxTL4DVJXWeXtUh7"
+                    } ,
+                    "tenant" : {
+                      "href" : "https://api.stormpath.com/v1/tenants/Ad8mIcavSty7XzD-xZdP3g"
+                    } ,
+                    "emailVerificationToken" : null
+                  }
+      get: 
+        is: [ query ]
+        description: You can list your applications accounts by sending a GET request to your applications accounts Collection Resource href URL. The response is a paginated list of application accounts.
+        queryParameters: 
+          username: 
+            description: The username for the account. Must be unique across the owning directory. If not specified, the username will default to the email field
+            minLength: 1
+            maxLength: 255
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: AccountsListresp
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/applications/cJoiwcorTTmkDDBsf02AbA/accounts" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/accounts/WpM9nyZ2TbaEzfbRvLk9KA"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/accounts/aLlyOUrBAse34js9hjiH9j"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/accounts/Xhf0a9HLA02djsdP90dsQ2"
+                      }
+                    ]
+                  }
+    /groups: 
+      type: stormpathResource
+      get: 
+        is: [ query ]
+        description: You can list your applications groups by sending a GET request to your applications groups Collection Resource href URL. The response is a paginated list of application groups.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: GroupsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/applications/cJoiwcorTTmkDDBsf02AbA/groups" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/groups/WpM9nyZ2TbaEzfbRvLk9KA"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groups/aLlyOUrBAse34js9hjiH9j"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groups/Xhf0a9HLA02djsdP90dsQ2"
+                      }
+                    ]
+                  }
+      post: 
+        description: "Create an application group. In addition to Stormpath's group attributes, you may also specify your own custom data by including a customData JSON object"
+        body: 
+          application/json: 
+            schema: Group
+            example: |
+              {
+                "name" : "Jedi High Council",
+                "description" : "Elected leaders of the Jedi Order.",
+                "status" : "ENABLED"
+              }
+        responses: 
+          201: 
+            body: 
+              application/json: 
+                schema: GroupResponse
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ",
+                    "name" : "Jedi High Council",
+                    "description" : "Elected leaders of the Jedi Order.",
+                    "status" : "ENABLED",
+                    "directory" : {
+                      "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q"
+                    },
+                    "tenant" : {
+                      "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW"
+                    },
+                    "accounts" : {
+                      "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ/accounts"
+                    }
+                  }
+    /passwordResetTokens: 
+      type: stormpathResource
+      post: 
+        description: A successful HTTP POST sends a password reset email to the first discovered account associated with the corresponding application. The email recipient can then click a password reset URL in the email to reset their password in a web form.
+        body: 
+          application/json: 
+            schema: ResetEmail
+            example: |
+              {
+                "email" : "john.smith@stormpath.com"
+              }
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: ResetEmailresp
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/passwordResetTokens/j6HqguWPSBSXM2xmcOUShw" ,
+                    "email" : "john.smith@stormpath.com" ,
+                    "account" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02bAb"
+                    }
+                  }
+          400: 
+            description: If the password reset token creation fails, a 400 Bad Request is returned with an error payload explaining why the attempt failed.
+            body: 
+              application/json: 
+                schema: ResetEmailFailure
+                example: |
+                  {
+                    "status" : 404 ,
+                    "code" : 404 ,
+                    "message" : "The requested resource does not exist." ,
+                    "developerMessage" : "The requested resource does not exist." ,
+                    "moreInfo" : "mailto:support@stormpath.com"
+                  }
+      /{token}: 
+        type: stormpathResource
+        get: 
+          description: Retrieving a token resource successfully using an HTTP GET indicates that the token is valid. Thus, to validate a token, you call to the passwordResetTokens end point and specify the token captured from the query string as the specific resource to request
+          responses: 
+            200: 
+              body: 
+                application/json: 
+                  schema: RetrievingTokenResource
+                  example: |
+                    {
+                      "href" : "https://api.stormpath.com/v1/applications/WpM9nyZ2TbaEzfbRvLk9KA/passwordResetTokens/j6HqguWPSBSXM2xmcOUShw" ,
+                      "email" : "john.smith@stormpath.com" ,
+                      "account" : {
+                        "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02bAb"
+                      }
+                    }
+            404: 
+              description: If the password reset token is invalid - it never existed or has expired - a 404 Not Found response is returned.
+              body: 
+                application/json: 
+                  schema: RetrievingTokenResourceFailure
+                  example: |
+                    {
+                      "status" : 404 ,
+                      "code" : 404 ,
+                      "message" : "The requested resource does not exist." ,
+                      "developerMessage" : "The requested resource does not exist." ,
+                      "moreInfo" : "mailto:support@stormpath.com"
+                    }
+    /accountStoreMappings: 
+      type: stormpathResource
+      get: 
+        description: List an applications assigned account stores.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: StoreMappingsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/applications/5D26Bl8lHTct1FDCHrltc3/accountStoreMappings" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/accountStoreMappings/XpM9nyZ2TbaEzfbRvLk9KA"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/accountStoreMappings/aLlyOUrBAse34js9hjiH9j"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/accountStoreMappings/Xhf0a9HLA02djsdP90dsQ2"
+                      }
+                    ]
+                  }
+/accountStoreMappings: 
+  type: stormpathResource
+  post: 
+    description: Create an account store mapping
+    body: 
+      application/json: 
+        schema: AccountStoreMapping
+        example: |
+          {
+            "application" : {
+              "href" : "https://api.stormpath.com/v1/applications/Uh8FzIouQ9C8EpcExAmPLe"
+            } ,
+            "accountStore" : {
+              "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpExAmPLe"
+            } ,
+            "isDefaultAccountStore" : true ,
+            "isDefaultGroupStore" : true
+          }
+    responses: 
+      200: 
+        body: 
+          application/json: 
+            schema: AccountStoreMappingresp
+            example: |
+              {
+                "href" : "https://api.stormpath.com/v1/accountStoreMappings/7Ui2gpn9tV75y3TExAmPLe" ,
+                "accountStore" : {
+                  "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpExAmPLe"
+                } ,
+                "application" : {
+                  "href" : "https://api.stormpath.com/v1/applications/Uh8FzIouQ9C8EpcExAmPLe"
+                } ,
+                "listIndex" : 0 ,
+                "isDefaultAccountStore" : true ,
+                "isDefaultGroupStore" : true
+              }
+  /{accountStoreMappingId}: 
+    type: stormpathResource
+    get: 
+      description: Retreive an account store mapping.
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: RetrieveAccountStoreMappings
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/accountStoreMappings/7Ui2gpn9tV75y3TExAmPLe" ,
+                  "accountStore" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpExAmPLe"
+                  } ,
+                  "application" : {
+                    "href" : "https://api.stormpath.com/v1/applications/Uh8FzIouQ9C8EpcExAmPLe"
+                  } ,
+                  "listIndex" : 0 ,
+                  "isDefaultAccountStore" : true ,
+                  "isDefaultGroupStore" : true
+                }
+    post: 
+      description: Update an account store mapping
+      body: 
+        application/json: 
+          schema: UpdateAccountStoreMapping
+          example: |
+            {
+              "isDefaultAccountStore" : true
+            }
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: UpdateAccountStoreMappingresp
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/accountStoreMappings/7Ui2gpn9tV75y3TExAmPLe" ,
+                  "accountStore" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpExAmPLe"
+                  } ,
+                  "application" : {
+                    "href" : "https://api.stormpath.com/v1/applications/Uh8FzIouQ9C8EpcExAmPLe"
+                  } ,
+                  "listIndex" : 0 ,
+                  "isDefaultAccountStore" : true ,
+                  "isDefaultGroupStore" : true
+                }
+    delete: 
+      description: Delete an account store mapping
+/directories: 
+  type: stormpathResource
+  post: 
+    description: Create a cloud directory
+    body: 
+      application/json: 
+        schema: CreateCloudDirectory
+        example: |
+          {
+            "name" : "Captains" ,
+            "description" : "Captains from a variety of stories"
+          }
+    responses: 
+      201: 
+        body: 
+          application/json: 
+            schema: CreateCloudDirectoryresp
+            example: |
+              {
+                "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q" ,
+                "name" : "Captains" ,
+                "description" : "Captains from a variety of stories" ,
+                "status" : "enabled" ,
+                "tenant" : {
+                  "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW"
+                } ,
+                "accounts" : {
+                  "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/accounts"
+                } ,
+                "groups" : {
+                  "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/groups"
+                }
+              }
+  /{directoryId}: 
+    type: stormpathResource
+    get: 
+      description: Retrieve a cloud directory
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: RetrieveDirectory
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q" ,
+                  "name" : "Captains" ,
+                  "description" : "Captains from a variety of stories" ,
+                  "status" : "enabled" ,
+                  "accounts" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/accounts"
+                  } ,
+                  "groups" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/groups"
+                  } ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW"
+                  }
+                }
+    post: 
+      description: Update a cloud directory
+      body: 
+        application/json: 
+          schema: UpdateDirectory
+          example: |
+            {
+              "name" : "Captains"
+            }
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: UpdateDirectoryresp
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q" ,
+                  "name" : "Captains" ,
+                  "description" : "Captains from a variety of stories" ,
+                  "status" : "enabled" ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW"
+                  } ,
+                  "accounts" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/accounts"
+                  } ,
+                  "groups" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/groups"
+                  }
+                }
+    delete: 
+      description: Delete a cloud directory
+    /accounts: 
+      type: stormpathResource
+      description: ""
+      get: 
+        is: [ query ]
+        description: You can list your directorys accounts by sending a GET request to your directorys accounts Collection Resource href URL. The response is a paginated list of directory accounts.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: DirectoryAccountsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/directories/5D1bvO5To6KQBaGFh793Zz/groups" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/groups/WpM9nyZ2TbaEzfbRvLk9KA"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groups/aLlyOUrBAse34js9hjiH9j"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groups/Xhf0a9HLA02djsdP90dsQ2"
+                      }
+                    ]
+                  }
+      post: 
+        description: Create an account
+        body: 
+          application/json: 
+            schema: CreateAccount
+            example: |
+              {
+                "username" : "jlpicard" ,
+                "email" : "capt@enterprise.com" ,
+                "givenName" : "Jean-Luc" ,
+                "surname" : "Picard" ,
+                "password" : "uGhd%a8Kl!"
+              }
+        responses: 
+          201: 
+            body: 
+              application/json: 
+                schema: CreateAccountresp
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA" ,
+                    "username" : "jlpicard" ,
+                    "email" : "capt@enterprise.com" ,
+                    "fullName" : "Jean-Luc Picard" ,
+                    "givenName" : "Jean-Luc" ,
+                    "middleName" : "" ,
+                    "surname" : "Picard" ,
+                    "status" : "UNVERIFIED" ,
+                    "customData" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/customData"
+                    } ,
+                    "groups" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groups"
+                    } ,
+                    "groupMemberships" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groupMemberships"
+                    } ,
+                    "directory" : {
+                      "href" : "https://api.stormpath.com/v1/directories/WpM9nyZ2TbaEzfbRvLk9KA"
+                    } ,
+                    "tenant" : {
+                      "href" : "https://api.stormpath.com/v1/tenants/Ad8mIcavSty7XzD-xZdP3g"
+                    } ,
+                    "emailVerificationToken" : {
+                      "href" : "https://api.stormpath.com/v1/accounts/emailVerificationTokens/4VQxTP5I7Xio03QJTOwQy1"
+                    }
+                  }
+    /groups: 
+      type: stormpathResource
+      get: 
+        is: [ query ]
+        description: You can list your directorys groups by sending a GET request to your directorys groups Collection Resource href URL. The response is a paginated list of directory groups.
+        queryParameters: 
+          name: 
+            description: The name of the group. Must be unique within a directory.
+            minLength: 1
+            maxLength: 255
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: DirectoryAccountsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/directories/5D1bvO5To6KQBaGFh793Zz/groups" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/groups/WpM9nyZ2TbaEzfbRvLk9KA"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groups/aLlyOUrBAse34js9hjiH9j"
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groups/Xhf0a9HLA02djsdP90dsQ2"
+                      }
+                    ]
+                  }
+/groups: 
+  type: stormpathResource
+  /{groupId}: 
+    type: stormpathResource
+    get: 
+      description: Retrieve a group
+      queryParameters: 
+        expand: 
+          description: "The following Groups attributes are expandable: tenant, directory, accounts. Also, because accounts is a Collection Resources itself, you can additionally control pagination for either expanded collection."
+          example: "expand=tenant,directory,accounts(offset:0,limit:50)"
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: RetrieveGroup
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ" ,
+                  "name" : "Aquanauts" ,
+                  "description" : "Sea Voyagers" ,
+                  "status" : "enabled" ,
+                  "directory" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q"
+                  } ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW"
+                  } ,
+                  "accounts" : {
+                    "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ/accounts"
+                  }
+                }
+    post: 
+      description: Update a group
+      body: 
+        application/json: 
+          schema: UpdateGroup
+          example: |
+            {
+              "description" : "Sea Voyagers"
+            }
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ",
+                  "name" : "Aquanauts",
+                  "description" : "Sea Voyagers",
+                  "status" : "enabled",
+                  "directory" : {
+                    "href" : "https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q"
+                  },
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/Gh9238fksJlsieJkPkQuW"
+                  },
+                  "accounts" : {
+                    "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ/accounts"
+                  }
+                }
+    delete: 
+      description: Delete a group
+    /accounts: 
+      type: stormpathResource
+      get: 
+        is: [ query ]
+        description: Retreive group accounts.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+    /customData: 
+      type: stormpathResource
+      get: 
+        description: Retrieve a group custom data
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                example: ""
+      delete: 
+        description: Delete all of a groups custom data
+      post: 
+        description: Update a group custom data
+        body: 
+          application/json: 
+        responses: 
+          200: 
+            body: 
+              application/json: 
+      /{fieldName}: 
+        type: stormpathResource
+        delete: 
+          description: Delete a customData field.
+    /accountMemberships: 
+      type: stormpathResource
+      get: 
+        description: Retreive a Collection Resource containing the group memberships to which a specific group is a member
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: GroupMembershipsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/MvdTIJakRO2Ry8c5z5itWw/groupMemberships" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/groupMemberships/36KuRJcsfiHZjCR0Trv4yJ" ,
+                        "account" : {
+                          "href" : "https://api.stormpath.com/v1/accounts/MvdTIJakRO2Ry8c5z5itWw"
+                        } ,
+                        "group" : {
+                          "href" : "https://api.stormpath.com/v1/groups/tKP_30-9TcCneD3ktBwcig"
+                        }
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groupMemberships/1kjD3owGFAAzoGhFsO1oLz" ,
+                        "account" : {
+                          "href" : "https://api.stormpath.com/v1/accounts/MvdTIJakRO2Ry8c5z5itWw"
+                        } ,
+                        "group" : {
+                          "href" : "https://api.stormpath.com/v1/groups/smJGMBMpQ_-FKvMgCRTdVA"
+                        }
+                      }
+                    ]
+                  }
+/groupMemberships: 
+  type: stormpathResource
+  post: 
+    description: To create a group membership you need the account and the group href.
+    body: 
+      application/json: 
+        schema: CreateGroupMembership
+        example: |
+          {
+            "account" : {
+              "href" : "https://api.stormpath.com/v1/accounts/gSraAOpFS-Savh3h6gFDzQ"
+            } ,
+            "group" : {
+              "href" : "https://api.stormpath.com/v1/groups/smJGMBMpQ_-FKvMgCRTdVA"
+            }
+          }
+    responses: 
+      201: 
+        body: 
+          application/json: 
+            schema: CreateGroupMembershipresp
+            example: |
+              {
+                "href" : "https://api.stormpath.com/v1/groupMemberships/57YZCqrNgrzcIGYs1PfP4F" ,
+                "account" : {
+                  "href" : "https://api.stormpath.com/v1/accounts/gSraAOpFS-Savh3h6gFDzQ"
+                } ,
+                "group" : {
+                  "href" : "https://api.stormpath.com/v1/groups/smJGMBMpQ_-FKvMgCRTdVA"
+                }
+              }
+  /{groupMembershipId}: 
+    type: stormpathResource
+    get: 
+      description: |
+        Retrieve a group membership.
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: RetrieveGroupMembership
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/groupMemberships/249Up9ojT6NUNEYocdG4Dj" ,
+                  "account" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/k8idbaXRTSKncv3VLffDNw"
+                  } ,
+                  "group" : {
+                    "href" : "https://api.stormpath.com/v1/groups/smJGMBMpQ_-FKvMgCRTdVA"
+                  }
+                }
+    delete: 
+      description: Delete a group membership
+/accounts: 
+  type: stormpathResource
+  /{accountId}: 
+    type: stormpathResource
+    get: 
+      description: Retrieve an account
+      queryParameters: 
+        expand: 
+          description: "The following Account attributes are expandable: customData, tenant, directory, groups, groupMemberships. Also, because groups and groupMemberships are Collection Resources themselves, you can additionally control pagination for either expanded collection."
+          example: "expand=tenant,directory,groups(offset:0,limit:50),groupMemberships(offset:0,limit:50)"
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: RetrieveAccount
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA" ,
+                  "username" : "jlpicard" ,
+                  "email" : "capt@enterprise.com" ,
+                  "fullName" : "Jean-Luc Picard" ,
+                  "givenName" : "Jean-Luc" ,
+                  "middleName" : "" ,
+                  "surname" : "Picard" ,
+                  "status" : "ENABLED" ,
+                  "customData" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/customData"
+                  } ,
+                  "groups" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groups"
+                  } ,
+                  "groupMemberships" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groupMemberships"
+                  } ,
+                  "directory" : {
+                    "href" : "https://api.stormpath.com/v1/directories/1FaQ6kZxTL4DVJXWeXtUh7"
+                  } ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/Ad8mIcavSty7XzD-xZdP3g"
+                  } ,
+                  "emailVerificationToken" : null
+                }
+    post: 
+      description: Update an account
+      body: 
+        application/json: 
+          schema: UpdateAccount
+          example: |
+            {
+              "username" : "jlpicard" ,
+              "givenName" : "Jean-Luc" ,
+              "surname" : "Picard"
+            }
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              schema: UpdateAccountresp
+              example: |
+                {
+                  "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA" ,
+                  "username" : "jlpicard" ,
+                  "email" : "capt@enterprise.com" ,
+                  "fullName" : "Jean-Luc Picard" ,
+                  "givenName" : "Jean-Luc" ,
+                  "middleName" : "" ,
+                  "surname" : "Picard" ,
+                  "status" : "ENABLED" ,
+                  "customData" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/customData"
+                  } ,
+                  "groups" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groups"
+                  } ,
+                  "groupMemberships" : {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groupMemberships"
+                  } ,
+                  "directory" : {
+                    "href" : "https://api.stormpath.com/v1/directories/1FaQ6kZxTL4DVJXWeXtUh7"
+                  } ,
+                  "tenant" : {
+                    "href" : "https://api.stormpath.com/v1/tenants/Ad8mIcavSty7XzD-xZdP3g"
+                  } ,
+                  "emailVerificationToken" : null
+                }
+    delete: 
+      description: Delete an account
+    /groupMemberships: 
+      type: stormpathResource
+      get: 
+        description: Retreive a paginated list of the group memberships where the account is involved.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: GroupMembershipsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/MvdTIJakRO2Ry8c5z5itWw/groupMemberships" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/groupMemberships/36KuRJcsfiHZjCR0Trv4yJ" ,
+                        "account" : {
+                          "href" : "https://api.stormpath.com/v1/accounts/MvdTIJakRO2Ry8c5z5itWw"
+                        } ,
+                        "group" : {
+                          "href" : "https://api.stormpath.com/v1/groups/tKP_30-9TcCneD3ktBwcig"
+                        }
+                      } , {
+                        "href" : "https://api.stormpath.com/v1/groupMemberships/1kjD3owGFAAzoGhFsO1oLz" ,
+                        "account" : {
+                          "href" : "https://api.stormpath.com/v1/accounts/MvdTIJakRO2Ry8c5z5itWw"
+                        } ,
+                        "group" : {
+                          "href" : "https://api.stormpath.com/v1/groups/smJGMBMpQ_-FKvMgCRTdVA"
+                        }
+                      }
+                    ]
+                  }
+    /groups: 
+      type: stormpathResource
+      get: 
+        description: Retreive a Collection Resource containing links for all groups where a specific account is a member.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: AccountGroupsList
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/groups" ,
+                    "offset" : 0 ,
+                    "limit" : 25 ,
+                    "items" : [
+                      {
+                        "href" : "https://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ" ,
+                        "name" : "Red Shirts" ,
+                        "description" : "" ,
+                        "status" : "ENABLED" ,
+                        "directory" : {
+                          "href" : "http://api.stormpath.com/v1/directories/1FaQ6kZxTL4DVJXWeXtUh7"
+                        } ,
+                        "tenant" : {
+                          "href" : "http://api.stormpath.com/v1/tenants/tqjB6LiESGO00qvC5dkNw"
+                        } ,
+                        "accounts" : {
+                          "href" : "http://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ/accounts"
+                        } ,
+                        "accountMemberships" : {
+                          "href" : "http://api.stormpath.com/v1/groups/ZgoHUG0oSoVNeU0K4GZeVQ/accountMemberships"
+                        }
+                      }
+                    ]
+                  }
+    /customData: 
+      type: stormpathResource
+      get: 
+        description: Retrieve an account custom data
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: RetrieveAccountCustomData
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/customData" ,
+                    "createdAt" : "2014-07-16T13:48:22.378Z" ,
+                    "modifiedAt" : "2014-07-16T13:48:22.378Z" ,
+                    "birthDate" : "1985-07-15" ,
+                    "favoriteColor" : "blue"
+                  }
+      post: 
+        description: Update account custom data
+        body: 
+          application/json: 
+            schema: UpdateAccountCustomData
+            example: |
+              {
+                "favoriteColor" : "red" ,
+                "hobby" : "Kendo"
+              }
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: UpdateAccountCustomDataresp
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/cJoiwcorTTmkDDBsf02AbA/customData" ,
+                    "createdAt" : "2014-07-16T13:48:22.378Z" ,
+                    "modifiedAt" : "2014-07-16T13:48:22.378Z" ,
+                    "birthDate" : "1985-07-15" ,
+                    "favoriteColor" : "red" ,
+                    "hobby" : "Kendo"
+                  }
+      delete: 
+        description: Delete all of an accounts custom data
+      /{fieldName}: 
+        type: stormpathResource
+        delete: 
+          description: Delete a customData field.
+  /emailVerificationTokens: 
+    type: stormpathResource
+    /{verificationToken}: 
+      type: stormpathResource
+      post: 
+        description: Verify the email.
+        responses: 
+          200: 
+            body: 
+              application/json: 
+                schema: EmailVerificationTokens
+                example: |
+                  {
+                    "href" : "https://api.stormpath.com/v1/accounts/6XLbNaUsKm3E0kXMTTr10V"
+                  }

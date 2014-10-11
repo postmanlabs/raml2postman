@@ -18,9 +18,14 @@ var converter = {
                 
                 // Validate before invoking callback;
                 if(converter.validate()){
-                    callback(converter.sampleFile);    
+                    var sf = converter.sampleFile;
+                    var env = _.clone(sf.environment, true);
+            
+                    delete sf.environment;
+
+                    callback(sf, env);
                 }else{
-                    callback({});    
+                    callback({},{});    
                 }
 
             } catch (err) {
@@ -36,9 +41,15 @@ var converter = {
 
         var baseUri = parentUri;
 
+        var paramDescription = 'Parameters:\n\n';
+
         _.forOwn(res.uriParameters, function(val, urlParam) {
             res.relativeUri = res.relativeUri.replace('{' + urlParam + '}', ":" + urlParam);
             this.addEnvKey(urlParam, val.type, val.displayName);
+
+            val.description = val.description || "";
+            paramDescription += urlParam + ": " + val.description + '\n\n';    
+            
         }, this);
 
         // Override the parentUri params, if they are specified here additionally.
@@ -78,16 +89,18 @@ var converter = {
             var headerString = '';
             var queryFlag = false;
 
-            // Description can be formatted using Markdown, we don't want lengthy descriptions.
-            if (req.description) {
+            request.description += '\n\n' + paramDescription;
 
-                var len = req.description.length > 500 ? 500 : req.description.length;
-                request.description = req.description.substring(0, len);
+            // // Description can be formatted using Markdown, we don't want lengthy descriptions.
+            // if (req.description) {
 
-                if (len > 500) {
-                    request.description += '...';
-                }
-            }
+            //     var len = req.description.length > 2000 ? 2000 : req.description.length;
+            //     request.description = req.description.substring(0, len);
+
+            //     if (len > 2000) {
+            //         request.description += '...';
+            //     }
+            // }
 
             request.id = this.generateId();
             request.method = req.method;
@@ -330,6 +343,8 @@ var converter = {
         var file = path.resolve(__dirname, inputFile);
 
         this.group = options.group;
+
+        // Set to true to generate test file.
         this.test = options.test;
 
         this.parseFile(file, cb);

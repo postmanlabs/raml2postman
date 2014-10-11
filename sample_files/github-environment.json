@@ -1,0 +1,175 @@
+{
+    "values": [
+        {
+            "name": "id",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "id"
+        },
+        {
+            "name": "commentId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "commentId"
+        },
+        {
+            "name": "orgId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "orgId"
+        },
+        {
+            "name": "userId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "userId"
+        },
+        {
+            "name": "teamsId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "teamsId"
+        },
+        {
+            "name": "ownerId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "ownerId"
+        },
+        {
+            "name": "repoId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "repoId"
+        },
+        {
+            "name": "shaCode",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "shaCode"
+        },
+        {
+            "name": "heads",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "heads"
+        },
+        {
+            "name": "branch",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "branch"
+        },
+        {
+            "name": "branchId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "branchId"
+        },
+        {
+            "name": "eventId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "eventId"
+        },
+        {
+            "name": "number",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "number"
+        },
+        {
+            "name": "name",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "name"
+        },
+        {
+            "name": "assignee",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "assignee"
+        },
+        {
+            "name": "user",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "user"
+        },
+        {
+            "name": "path",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "path"
+        },
+        {
+            "name": "archive_format",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "archive_format"
+        },
+        {
+            "name": "downloadId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "downloadId"
+        },
+        {
+            "name": "keyId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "keyId"
+        },
+        {
+            "name": "hookId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "hookId"
+        },
+        {
+            "name": "ref",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "ref"
+        },
+        {
+            "name": "targetUserId",
+            "enabled": true,
+            "value": "",
+            "type": "integer",
+            "key": "targetUserId"
+        },
+        {
+            "name": "language",
+            "enabled": true,
+            "value": "",
+            "type": "string",
+            "key": "language"
+        }
+    ],
+    "name": "GitHub API's Environment",
+    "id": "",
+    "timestamp": 0
+}

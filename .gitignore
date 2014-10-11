@@ -1,3 +1,4 @@
 node_modules
 collection_schema.json
-sample_files
+raml2JSON.js
+out.json
