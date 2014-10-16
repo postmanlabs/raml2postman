@@ -174,9 +174,18 @@ var converter = {
 
         // Check if the current resource is a top level resource.
         if (parentUri === this.data.baseUri) {
-            // All the requests in the top level resource have been processed.
-            this.sampleFile.folders.push(this.currentFolder);
 
+            // If there is only 1 request in the current folder, why create a folder?
+            if(this.currentFolder.order.length > 1){
+
+                // All the requests in the top level resource have been processed.
+                this.sampleFile.folders.push(this.currentFolder);    
+            }else{
+
+                // Add the request to the order property.
+                this.sampleFile.order.push(this.currentFolder.order[0]);
+            }
+            
             // Reset the currentFolder to the collection id.
             this.currentFolder = {
                 id: converter.sampleFile.id
