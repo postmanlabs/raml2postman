@@ -4,6 +4,7 @@ var path = require('path');
 var validator = require('postman_validator');
 var raml = require('raml-parser');
 var _ = require('lodash');
+var async = require('async');
 
 var converter = {
 
@@ -384,6 +385,25 @@ var converter = {
         } else {
             console.log("Could not validate generated file");
             return false;
+        }
+    },
+
+    // Callback will be invoked with a boolean value indicating the validity.
+    isValid: function(str, callback) {
+
+        var later = function(){
+            callback(true);
+        };
+
+        var error = function(){
+            callback(false);
+        }
+        
+        // Title is a required property.
+        if(str.indexOf('title:') > 0){
+            raml.load(str).then(later, error);
+        }else{
+            raml.loadFile(str).then(later, error);
         }
     }
 };
