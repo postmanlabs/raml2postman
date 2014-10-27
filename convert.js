@@ -90,6 +90,7 @@ var converter = {
             var headerString = '';
             var queryFlag = false;
 
+            request.description = req.description || "";
             request.description += '\n\n' + paramDescription;
 
             // // Description can be formatted using Markdown, we don't want lengthy descriptions.
@@ -141,8 +142,10 @@ var converter = {
                     // add a Content-Type header.
                     headerString += 'Content-Type: ' + bodyParam + '\n';
 
-                    request.rawModeData = val.example || "";
-
+                    if(val){
+                        request.rawModeData = val.example || "";
+                    }
+                    
                     // Deal with schemas later, show example for now.
                     // // Only JSON schemas can be parsed. Schema has to be specified.
                     // if (bodyParam === 'application/json' && val.schema) {
@@ -324,11 +327,12 @@ var converter = {
         }, this);
 
         // Convert schemas to objects.
+        // Will be parsed later.
         var sc = this.data.schemas;
-
-        _.forOwn(sc, function(val, schema) {
-            val = this.schemaToJSON(JSON.parse(val));
-        }, this);
+        
+        // _.forOwn(sc, function(val, schema) {
+        //     val = this.schemaToJSON(JSON.parse(val));
+        // }, this);
 
         _.forEach(this.data.resources, function(resource) {
             // Initialize the currentFolder
