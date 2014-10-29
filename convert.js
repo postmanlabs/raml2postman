@@ -397,7 +397,7 @@ var converter = {
         this.group = options.group;
 
         // Set to true to generate test file.
-        this.test = true || options.test;
+        this.test = options.test;
 
         this.parseFile(file, cb);
     },
