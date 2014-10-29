@@ -1,16 +1,7 @@
 #%RAML 0.8
 title: Stormpath REST API
 version: v1
-baseUri: https://api.stormpath.com/{version}/{bucketName}/{testVersion}
-baseUriParameters: 
-  bucketName:
-    description: |
-      The sub-domain at which the API is accessible. Most API calls are sent to https://api.dropbox.com
-    enum: [ "api" ]
-  testVersion:
-    description: |
-      The sub-domain at which the API is accessible. Most API calls are sent to https://api.dropbox.com
-    enum: [ "api" ]
+baseUri: https://api.stormpath.com/{version}
 mediaType: application/json
 securitySchemes: 
   - basic: 
@@ -2115,7 +2106,7 @@ securedBy: [ basic ]
       description: |
         Because a REST caller can retrieve one and only one Tenant resource, it is often more convenient not to be concerned with the Tenant-specific URL is when performing a request, and instead use a simpler permanent alias.
         
-        You can request the current Tenant resource, and the API server will automatically issue a 302 redirect to the Tenant resource corresponding to the currently executing API caller. In other words, this endpoint redirects the API caller to their own Tenantâ€™s URI.
+        You can request the current Tenant resource, and the API server will automatically issue a 302 redirect to the Tenant resource corresponding to the currently executing API caller. In other words, this endpoint redirects the API caller to their own TenantÃ¢â‚¬â„¢s URI.
       responses: 
         302: 
   /{tenantId}: 
@@ -2193,11 +2184,6 @@ securedBy: [ basic ]
                     ]
                   }
 /applications: 
-  baseUriParameters:
-    bucketName:
-      description: |
-        The sub-domain at which the API is accessible. Most API calls are sent to https://api.dropbox.com
-      enum: [ "api-content" ]
   type: stormpathResource
   post: 
     description: Create an application
