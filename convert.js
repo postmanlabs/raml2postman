@@ -12,14 +12,42 @@ var converter = {
     currentFolder: {},
     env: {},
 
+    parseString: function(ramlString, callback) {
+        var oldThis = this;
+        raml.load(ramlString).then(function(data) {
+            try {
+                oldThis.convert(data);
+
+                // Validate before invoking callback;
+                if(oldThis.validate()){
+                    var sf = oldThis.sampleFile;
+                    var env = _.clone(sf.environment, true);
+
+                    delete sf.environment;
+
+                    callback(sf, env);
+                }else{
+                    callback({},{});
+                }
+
+            } catch (err) {
+                console.log(err);
+                process.exit(1);
+            }
+        }, function(error) {
+            console.error("Could not parse RAML file " + error);
+        });
+    },
+
     parseFile: function(filename, callback) {
+        var oldThis = this;
         raml.loadFile(filename).then(function(data) {
             try {
-                converter.convert(data);
+                oldThis.convert(data);
                 
                 // Validate before invoking callback;
-                if(converter.validate()){
-                    var sf = converter.sampleFile;
+                if(oldThis.validate()){
+                    var sf = oldThis.sampleFile;
                     var env = _.clone(sf.environment, true);
             
                     delete sf.environment;
@@ -39,7 +67,7 @@ var converter = {
     },
     
     convertResource: function(res, parentUri) {
-
+        var oldThis = this;
         var baseUri = parentUri;
 
         var paramDescription = 'Parameters:\n\n';
@@ -49,8 +77,8 @@ var converter = {
             this.addEnvKey(urlParam, val.type, val.displayName);
 
             val.description = val.description || "";
-            paramDescription += urlParam + ": " + val.description + '\n\n';    
-            
+            paramDescription += urlParam + ": " + val.description + '\n\n';
+
         }, this);
 
         // Override the parentUri params, if they are specified here additionally.
@@ -76,7 +104,7 @@ var converter = {
             folder.collection_id = this.sampleFile.id;
 
             // All subResources will access the order array from this obj
-            // and push their request id's into it. 
+            // and push their request id's into it.
             this.currentFolder = folder;
         }
 
@@ -108,7 +136,7 @@ var converter = {
 
             // No name has been specified, use the complete Uri minus the Base Uri.
             request.name = resourceUri.replace(this.data.baseUri, '');
-            
+
             request.time = this.generateTimestamp();
             request.url = resourceUri;
 
@@ -189,7 +217,7 @@ var converter = {
             
             // Reset the currentFolder to the collection id.
             this.currentFolder = {
-                id: converter.sampleFile.id
+                id: oldThis.sampleFile.id
             };
         }
     },
@@ -207,7 +235,7 @@ var converter = {
 
     schemaToJSON: function(schema) {
         var obj;
-
+        var oldThis = this;
         switch (schema.type) {
             case 'object':
                 obj = {};
@@ -224,7 +252,7 @@ var converter = {
                 // return the populated array
                 if (schema.items) {
                     schema.items.forEach(function(value) {
-                        obj.push(converter.schemaToJSON(value));
+                        obj.push(oldThis.schemaToJSON(value));
                     });
                 }
 
@@ -293,8 +321,8 @@ var converter = {
         this._modifyResourceTypes();
 
         // Initialize the spec.
-        var file = './postman-boilerplate.json';
-        this.sampleFile = this.read(file);
+        //var file = './postman-boilerplate.json';
+        this.sampleFile = JSON.parse('{"folders":[{"id":"","name":"","description":"","order":[],"collection_name":"","collection_id":""}],"id":"","name":"PostmanBarebones","order":[],"requests":[{"collectionId":"","dataMode":"params","descriptionFormat":"html","description":"","data":[],"headers":"","id":"","method":"","name":"","preRequestScript":"","pathVariables":{},"responses":[],"synced":false,"tests":"","time":0,"url":""}],"synced":false,"timestamp":0}');
 
         var sf = this.sampleFile;
 
@@ -311,9 +339,11 @@ var converter = {
         // Temporary, will be populated later.
         sf.folders = [];
 
-        sf.environment.name = ( sf.name || "Default" ) + "'s Environment";
-        sf.environment.timestamp = this.generateTimestamp();
-        sf.environment.id = this.generateId();
+
+        //ENVS not needed here
+//        sf.environment.name = ( sf.name || "Default" ) + "'s Environment";
+//        sf.environment.timestamp = this.generateTimestamp();
+//        sf.environment.id = this.generateId();
 
         // BaseURI Conversion
         _.forOwn(this.data.baseUriParameters, function(val, param) {
@@ -339,9 +369,9 @@ var converter = {
         }, this);
 
         // Add the environment variables.
-        _.forOwn(this.env, function(val) {
-            sf.environment.values.push(val);
-        }, this);
+//        _.forOwn(this.env, function(val) {
+//            sf.environment.values.push(val);
+//        }, this);
 
         if(!this.group){
             // If grouping is disabled, reset the folders.
