@@ -12,7 +12,7 @@ var converter = {
     currentFolder: {},
     env: {},
 
-    parseString: function(ramlString, callback) {
+    parseString: function(ramlString, callback, callbackError) {
         var oldThis = this;
         raml.load(ramlString).then(function(data) {
             try {
@@ -35,7 +35,7 @@ var converter = {
                 process.exit(1);
             }
         }, function(error) {
-            console.error("Could not parse RAML file " + error);
+            callbackError(((error.message)?error.message:error));
         });
     },
 
