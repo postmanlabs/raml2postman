@@ -19,15 +19,15 @@ var converter = {
                 oldThis.convert(data);
 
                 // Validate before invoking callback;
-                if(oldThis.validate()){
+                if (oldThis.validate()) {
                     var sf = oldThis.sampleFile;
                     var env = _.clone(sf.environment, true);
 
                     delete sf.environment;
 
                     callback(sf, env);
-                }else{
-                    callback({},{});
+                } else {
+                    callback({}, {});
                 }
 
             } catch (err) {
@@ -35,7 +35,7 @@ var converter = {
                 process.exit(1);
             }
         }, function(error) {
-            callbackError(((error.message)?error.message:error));
+            callbackError(((error.message) ? error.message : error));
         });
     },
 
@@ -44,17 +44,17 @@ var converter = {
         raml.loadFile(filename).then(function(data) {
             try {
                 oldThis.convert(data);
-                
+
                 // Validate before invoking callback;
-                if(oldThis.validate()){
+                if (oldThis.validate()) {
                     var sf = oldThis.sampleFile;
                     var env = _.clone(sf.environment, true);
-            
+
                     delete sf.environment;
 
                     callback(sf, env);
-                }else{
-                    callback({},{});    
+                } else {
+                    callback({}, {});
                 }
 
             } catch (err) {
@@ -65,7 +65,7 @@ var converter = {
             console.error("Could not parse RAML file " + error);
         });
     },
-    
+
     convertResource: function(res, parentUri) {
         var oldThis = this;
         var baseUri = parentUri;
@@ -170,10 +170,10 @@ var converter = {
                     // add a Content-Type header.
                     headerString += 'Content-Type: ' + bodyParam + '\n';
 
-                    if(val){
+                    if (val) {
                         request.rawModeData = val.example || "";
                     }
-                    
+
                     // Deal with schemas later, show example for now.
                     // // Only JSON schemas can be parsed. Schema has to be specified.
                     // if (bodyParam === 'application/json' && val.schema) {
@@ -208,16 +208,16 @@ var converter = {
         if (parentUri === this.data.baseUri) {
 
             // If there is only 1 request in the current folder, why create a folder?
-            if(this.currentFolder.order.length > 1){
+            if (this.currentFolder.order.length > 1) {
 
                 // All the requests in the top level resource have been processed.
-                this.sampleFile.folders.push(this.currentFolder);    
-            }else{
+                this.sampleFile.folders.push(this.currentFolder);
+            } else {
 
                 // Add the request to the order property.
                 this.sampleFile.order.push(this.currentFolder.order[0]);
             }
-            
+
             // Reset the currentFolder to the collection id.
             this.currentFolder = {
                 id: oldThis.sampleFile.id
@@ -325,7 +325,7 @@ var converter = {
 
         // Initialize the spec.
         //var file = './postman-boilerplate.json';
-        this.sampleFile = JSON.parse('{"folders":[{"id":"","name":"","description":"","order":[],"collection_name":"","collection_id":""}],"id":"","name":"PostmanBarebones","order":[],"requests":[{"collectionId":"","dataMode":"params","descriptionFormat":"html","description":"","data":[],"headers":"","id":"","method":"","name":"","preRequestScript":"","pathVariables":{},"responses":[],"synced":false,"tests":"","time":0,"url":""}],"synced":false,"timestamp":0}');
+        this.sampleFile = JSON.parse('{"environment":{"values":[],"name":"","id":"","timestamp":0},"folders":[{"id":"","name":"","description":"","order":[],"collection_name":"","collection_id":""}],"id":"","name":"New Collection","order":[],"requests":[{"collectionId":"","dataMode":"params","descriptionFormat":"html","description":"","data":[],"headers":"","id":"","method":"","name":"","preRequestScript":"","pathVariables":{},"responses":[],"synced":false,"tests":"","time":0,"url":""}],"synced":false,"timestamp":0}');
 
         var sf = this.sampleFile;
 
@@ -342,11 +342,9 @@ var converter = {
         // Temporary, will be populated later.
         sf.folders = [];
 
-
-        //ENVS not needed here
-//        sf.environment.name = ( sf.name || "Default" ) + "'s Environment";
-//        sf.environment.timestamp = this.generateTimestamp();
-//        sf.environment.id = this.generateId();
+        sf.environment.name = (sf.name || "Default") + "'s Environment";
+        sf.environment.timestamp = this.generateTimestamp();
+        sf.environment.id = this.generateId();
 
         // BaseURI Conversion
         _.forOwn(this.data.baseUriParameters, function(val, param) {
@@ -359,7 +357,7 @@ var converter = {
         // Convert schemas to objects.
         // Will be parsed later.
         var sc = this.data.schemas;
-        
+
         // _.forOwn(sc, function(val, schema) {
         //     val = this.schemaToJSON(JSON.parse(val));
         // }, this);
@@ -372,18 +370,18 @@ var converter = {
             this.convertResource(resource, this.data.baseUri);
         }, this);
 
-        // Add the environment variables.
-//        _.forOwn(this.env, function(val) {
-//            sf.environment.values.push(val);
-//        }, this);
+        //Add the environment variables.
+        _.forOwn(this.env, function(val) {
+            sf.environment.values.push(val);
+        }, this);
 
-        if(!this.group){
-            
+        if (!this.group) {
+
             // Copy over the ids in the order field of each folder
             // to the global order field
 
-            _.forEach(sf.folders, function(folder){
-                _.forEach(folder.order, function(ord){
+            _.forEach(sf.folders, function(folder) {
+                _.forEach(folder.order, function(ord) {
                     sf.order.push(ord);
                 }, this);
             }, this);
@@ -399,24 +397,23 @@ var converter = {
         this.group = options.group;
 
         // Set to true to generate test file.
-        this.test = options.test;
+        this.test = true || options.test;
 
         this.parseFile(file, cb);
     },
 
-    generateId: function(){
-        if(this.test){
+    generateId: function() {
+        if (this.test) {
             return "";
-        }
-        else{
+        } else {
             return uuid.v4();
         }
     },
 
-    generateTimestamp: function(){
-        if(this.test){
+    generateTimestamp: function() {
+        if (this.test) {
             return 0;
-        }else{
+        } else {
             return Date.now();
         }
     },
@@ -435,18 +432,18 @@ var converter = {
     // Callback will be invoked with a boolean value indicating the validity.
     isValid: function(str, callback) {
 
-        var later = function(){
+        var later = function() {
             callback(true);
         };
 
-        var error = function(){
+        var error = function() {
             callback(false);
         }
-        
+
         // Title is a required property.
-        if(str.indexOf('title:') > 0){
+        if (str.indexOf('title:') > 0) {
             raml.load(str).then(later, error);
-        }else{
+        } else {
             raml.loadFile(str).then(later, error);
         }
     }
