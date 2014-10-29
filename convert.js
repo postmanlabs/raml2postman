@@ -378,6 +378,16 @@ var converter = {
 //        }, this);
 
         if(!this.group){
+            
+            // Copy over the ids in the order field of each folder
+            // to the global order field
+
+            _.forEach(sf.folders, function(folder){
+                _.forEach(folder.order, function(ord){
+                    sf.order.push(ord);
+                }, this);
+            }, this);
+
             // If grouping is disabled, reset the folders.
             sf.folders = [];
         }
