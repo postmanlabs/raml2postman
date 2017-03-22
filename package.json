@@ -8,7 +8,7 @@
     "raml2postman": "./bin/raml2postman"
   },
   "dependencies": {
-    "node-uuid": ">= 1.4.1",
+    "node-uuid": ">=1.4.8",
     "postman_validator": ">= 0.0.4",
     "lodash": ">= 2.4.1",
     "raml-parser": ">= 0.8.7",
