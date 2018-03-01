@@ -72,22 +72,25 @@ var converter = {
 
         var paramDescription = 'Parameters:\n\n';
 
-        _.forOwn(res.uriParameters, function(val, urlParam) {
+        //using bind for pass this context parameter as
+        //lodash 4+ does not support this
+        //check https://github.com/lodash/lodash/wiki/Changelog#v400
+        _.forOwn(res.uriParameters, _.bind(function(val, urlParam) {
             res.relativeUri = res.relativeUri.replace('{' + urlParam + '}', ":" + urlParam);
             this.addEnvKey(urlParam, val.type, val.displayName);
 
             val.description = val.description || "";
             paramDescription += urlParam + ": " + val.description + '\n\n';
 
-        }, this);
+        }, this));
 
         // Override the parentUri params, if they are specified here additionally.
         // Only new params affect this part. Old params have been converted already.
 
-        _.forOwn(res.baseUriParameters, function(val, urlParam) {
+        _.forOwn(res.baseUriParameters, _.bind(function(val, urlParam) {
             baseUri = baseUri.replace('{' + urlParam + '}', ":" + urlParam);
             this.addEnvKey(urlParam, val.type, val.displayName);
-        }, this);
+        }, this));
 
         // All occurences of baseUriParams have been dealt earlier.
         var resourceUri = baseUri + res.relativeUri;
@@ -109,7 +112,7 @@ var converter = {
         }
 
         // Convert own methods.
-        _.forEach(res.methods, function(req) {
+        _.forEach(res.methods, _.bind(function(req) {
 
             // Make a deep copy of the the sampleRequest.
             var request = _.clone(this.sampleRequest, true);
@@ -158,7 +161,7 @@ var converter = {
             });
 
             // Body
-            _.forOwn(req.body, function(val, bodyParam) {
+            _.forOwn(req.body, _.bind(function(val, bodyParam) {
 
                 if (bodyParam === 'application/x-www-form-urlencoded') {
                     request.dataMode = 'urlencoded';
@@ -192,17 +195,17 @@ var converter = {
                         request.data.push(obj);
                     });
                 }
-            }, this);
+            }, this));
 
             request.headers = headerString;
             this.sampleFile.requests.push(request);
             this.currentFolder.order.push(request.id);
-        }, this);
+        }, this));
 
         // Convert child resources.
-        _.forEach(res.resources, function(subRes) {
+        _.forEach(res.resources, _.bind(function(subRes) {
             this.convertResource(subRes, resourceUri);
-        }, this);
+        }, this));
 
         // Check if the current resource is a top level resource.
         if (parentUri === this.data.baseUri) {
@@ -347,12 +350,12 @@ var converter = {
         sf.environment.id = this.generateId();
 
         // BaseURI Conversion
-        _.forOwn(this.data.baseUriParameters, function(val, param) {
+        _.forOwn(this.data.baseUriParameters, _.bind(function(val, param) {
             // Version will be specified in the baseUriParameters
             this.data.baseUri = this.data.baseUri.replace("{" + param + "}", ":" + param);
 
             this.addEnvKey(param, val.type, val.displayName);
-        }, this);
+        }, this));
 
         // Convert schemas to objects.
         // Will be parsed later.
@@ -362,13 +365,13 @@ var converter = {
         //     val = this.schemaToJSON(JSON.parse(val));
         // }, this);
 
-        _.forEach(this.data.resources, function(resource) {
+        _.forEach(this.data.resources, _.bind(function(resource) {
             // Initialize the currentFolder
             this.currentFolder.id = sf.id;
 
             // Top Level conversion.
             this.convertResource(resource, this.data.baseUri);
-        }, this);
+        }, this));
 
         //Add the environment variables.
         _.forOwn(this.env, function(val) {
